@@ -29,7 +29,7 @@ const Form = ({ route, method }) => {
         </form>
       ) : (
         <form className="form-container">
-          <h2>Register</h2>
+          <h2>Register</h2> 
           <label>Username:</label>
           <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" required className="input" placeholder="Username" />
           <label>Email:</label>
