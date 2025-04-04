@@ -1,0 +1,48 @@
+.button-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+  }
+  
+  .button.active {
+    background-color: #0056b3;
+  }
+  
+  .form-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .submit-button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #a7283d;
+    color: #fff;
+    border: none;
+    width: 100%;
+    
+  }
+  
