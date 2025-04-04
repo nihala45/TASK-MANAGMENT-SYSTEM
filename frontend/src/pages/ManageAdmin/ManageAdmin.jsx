@@ -1,111 +1,145 @@
 import React, { useState } from 'react';
-import './manageadmin.css';
+import './ManageAdmin.css';
+import api from '../../api';
 
-const ManageAdmin = () => {
-  const [admins, setAdmins] = useState([
-    { id: 1, username: "admin1", email: "admin1@example.com", role: "admin" },
-    { id: 2, username: "admin2", email: "admin2@example.com", role: "admin" }
-  ]);
-  const [form, setForm] = useState({ username: "", email: "", phone: "", password: "" });
-  const [showRoleModal, setShowRoleModal] = useState(false);
-  const [selectedAdminId, setSelectedAdminId] = useState(null);
-  const [selectedRole, setSelectedRole] = useState("user");
+const SuperAdminPanel = () => {
+  const [admins, setAdmins] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+  });
 
-  const handleInputChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const openModal = () => setShowModal(true);
+  const closeModal = () => {
+    setFormData({ name: '', email: '', password: '', phone: '' });
+    setShowModal(false);
   };
 
-  const handleCreateAdmin = (e) => {
-    e.preventDefault();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  
+
+const createAdmin = async () => {
+  const { name, email, password, phone } = formData;
+
+  if (name && email && password && phone) {
     const newAdmin = {
-      id: Date.now(),
-      username: form.username,
-      email: form.email,
-      phone: form.phone,
-      role: "admin"
+      username: name,
+      email: email,
+      password: password,
+      phone: phone,
     };
-    setAdmins([...admins, newAdmin]);
-    setForm({ username: "", email: "", phone: "", password: "" });
+
+    try {
+      const response = await api.post('/api/create-admin/', newAdmin);
+
+      if (response.status === 201) {
+        setAdmins((prevAdmins) => [...prevAdmins, response.data.user]);
+        alert('Admin created successfully!');
+        closeModal();
+      }
+    } catch (error) {
+      console.error('Error creating admin:', error);
+      alert(error.response?.data?.error || 'Failed to create admin');
+    }
+  } else {
+    alert('Please fill all fields');
+  }
+};
+
+
+  const deleteAdmin = (index) => {
+    if (window.confirm("Are you sure you want to delete this admin?")) {
+      const updated = [...admins];
+      updated.splice(index, 1);
+      setAdmins(updated);
+    }
   };
 
-  const handleDelete = (id) => {
-    setAdmins(admins.filter(admin => admin.id !== id));
-  };
-
-  const handlePromoteDemote = (id) => {
-    setAdmins(admins.map(admin =>
-      admin.id === id
-        ? { ...admin, role: admin.role === 'admin' ? 'user' : 'admin' }
-        : admin
-    ));
-  };
-
-  const openRoleModal = (id) => {
-    setSelectedAdminId(id);
-    setShowRoleModal(true);
-  };
-
-  const assignRole = () => {
-    setAdmins(admins.map(admin =>
-      admin.id === selectedAdminId
-        ? { ...admin, role: selectedRole }
-        : admin
-    ));
-    setShowRoleModal(false);
+  const toggleRole = (index) => {
+    const updated = [...admins];
+    updated[index].role = updated[index].role === 'Admin' ? 'Moderator' : 'Admin';
+    setAdmins(updated);
   };
 
   return (
-    <div className="manage-admin-container">
-      <h2>SuperAdmin - Manage Admins</h2>
+    <div className="container">
+      <h2>SuperAdmin Panel</h2>
+      <button className="btn" onClick={openModal}>Create Admin</button>
 
-      <form className="create-admin-form" onSubmit={handleCreateAdmin}>
-        <input type="text" name="username" placeholder="Username" value={form.username} onChange={handleInputChange} required />
-        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleInputChange} required />
-        <input type="text" name="phone" placeholder="Phone" value={form.phone} onChange={handleInputChange} required />
-        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleInputChange} required />
-        <button type="submit">Create Admin</button>
-      </form>
-
-      <table className="admins-table">
+      <table className="admin-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Username</th>
+            <th>Name</th>
             <th>Email</th>
+            <th>Phone</th>
             <th>Role</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {admins.map((admin, index) => (
-            <tr key={admin.id}>
+            <tr key={index}>
               <td>{index + 1}</td>
-              <td>{admin.username}</td>
+              <td>{admin.name}</td>
               <td>{admin.email}</td>
+              <td>{admin.phone}</td>
               <td>{admin.role}</td>
               <td>
-                <button onClick={() => openRoleModal(admin.id)}>Assign Role</button>
-                <button onClick={() => handlePromoteDemote(admin.id)}>
-                  {admin.role === 'admin' ? 'Demote' : 'Promote'}
-                </button>
-                <button onClick={() => handleDelete(admin.id)}>Delete</button>
+                <button className="btn" onClick={() => toggleRole(index)}>Promote/Demote</button>
+                <button className="btn" onClick={() => deleteAdmin(index)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {showRoleModal && (
-        <div className="modal">
+      {showModal && (
+        <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Assign Role</h3>
-            <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-            <div className="modal-actions">
-              <button onClick={assignRole}>Assign</button>
-              <button onClick={() => setShowRoleModal(false)}>Cancel</button>
+            <h3>Create Admin</h3>
+            <input
+              className="input"
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <input
+              className="input"
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <input
+              className="input"
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <input
+              className="input"
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+            <div>
+              <button className="btn" onClick={createAdmin}>Create</button>
+              <button className="btn" onClick={closeModal}>Cancel</button>
             </div>
           </div>
         </div>
@@ -114,4 +148,4 @@ const ManageAdmin = () => {
   );
 };
 
-export default ManageAdmin;
+export default SuperAdminPanel;

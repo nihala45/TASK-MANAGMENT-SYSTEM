@@ -11,6 +11,7 @@ import { logout } from "../../Redux/actions/authActions";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SuperAdminLogin from "../SuperUserLogin/SuperUserLogin";
+import ManageAdmin from '../ManageAdmin/ManageAdmin'
 
 const SuperAdminHome = () => {
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const SuperAdminHome = () => {
       case "dashboard":
         return <h2>Welcome to the Dashboard</h2>;
       case "admins":
-        return <h2>Admin Management (Coming Soon)</h2>;
+        return <ManageAdmin/>
       case "users":
         return <MangementUsers />;
       case "tasks":

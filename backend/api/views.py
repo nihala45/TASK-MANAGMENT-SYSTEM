@@ -7,6 +7,8 @@ from rest_framework.decorators import api_view, action
 from django.contrib.auth import authenticate
 from .models import User
 from .serializers import UserSerializer
+from rest_framework.permissions import IsAdminUser
+from django.contrib.auth.hashers import make_password
 
 
 
@@ -130,3 +132,28 @@ class UserViewSet(viewsets.ViewSet):
         user.is_active = True
         user.save()
         return Response({'status': 'user unblocked'}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class CreateAdminView(APIView):
+    permission_classes = [IsAdminUser]  # Only superuser can create admins
+
+    def post(self, request):
+        data = request.data.copy()
+        required_fields = ['username', 'email', 'password', 'phone']
+
+        for field in required_fields:
+            if not data.get(field):
+                return Response({'error': f'{field} is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(email=data['email']).exists():
+            return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        data['is_staff'] = True
+        data['is_superuser'] = False  # Don't make them superuser
+        data['password'] = make_password(data['password'])
+
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Admin user created successfully', 'user': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
