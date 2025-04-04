@@ -1,7 +1,9 @@
-// home.jsx
+
 import React, { useState } from "react";
 import "./home.css";
-
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../Redux/actions/authActions";
 const Home = () => {
     const [status, setStatus] = useState("Pending");
     const [report, setReport] = useState("");
@@ -10,6 +12,12 @@ const Home = () => {
     const handleSubmit = () => {
         alert(`Task Submitted!\nStatus: ${status}\nReport: ${report}\nWorked Hours: ${hours}`);
     };
+    const navigate = useNavigate()
+    const dispatch = useDispatch();
+    const handleLogout = () => {
+      dispatch(logout()); 
+      navigate('/login');
+    }
 
     return (
         <div className="task-container">
@@ -68,6 +76,7 @@ const Home = () => {
             <button className="submit-button" onClick={handleSubmit}>
                 Submit Report
             </button>
+            <button onClick={handleLogout}  className='button1'>Logout</button>
         </div>
     );
 };
