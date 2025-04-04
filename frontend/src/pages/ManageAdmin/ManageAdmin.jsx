@@ -33,7 +33,7 @@ const SuperAdminPanel = () => {
 
         const defaultAssignments = {};
         adminList.forEach(admin => {
-          defaultAssignments[admin.id] = []; // optionally fetch assigned users from backend
+          defaultAssignments[admin.id] = [];
         });
         setAssignedUsers(defaultAssignments);
       }
@@ -43,7 +43,23 @@ const SuperAdminPanel = () => {
     }
   };
 
- 
+  const handleUserAssignment = (adminId, userId, isChecked) => {
+    setAssignedUsers(prev => {
+      const updated = { ...prev };
+      if (!updated[adminId]) {
+        updated[adminId] = [];
+      }
+
+      if (isChecked) {
+        updated[adminId] = [...updated[adminId], userId];
+      } else {
+        updated[adminId] = updated[adminId].filter(id => id !== userId);
+      }
+
+      return updated;
+    });
+  };
+
   const openModal = () => setShowModal(true);
   const closeModal = () => {
     setFormData({ name: '', email: '', password: '', phone: '' });
@@ -83,7 +99,7 @@ const SuperAdminPanel = () => {
   return (
     <div className="container">
       <h2>All Users Management</h2>
-      <button className="btn" onClick={openModal}>Create User</button>
+      <button className="btn" onClick={openModal}>Create Admin</button>
 
       <table className="admin-table">
         <thead>
@@ -93,45 +109,21 @@ const SuperAdminPanel = () => {
             <th>Email</th>
             <th>Phone</th>
             <th>Role</th>
-            <th>Assign Users</th>
-            <th>Action</th>
+        
           </tr>
         </thead>
         <tbody>
-  {users
-    .filter(user => user.role === 'admin')
-    .map((adminUser, index) => (
-      <tr key={adminUser.id}>
-        <td>{index + 1}</td>
-        <td>{adminUser.username}</td>
-        <td>{adminUser.email}</td>
-        <td>{adminUser.phone}</td>
-        <td>{adminUser.role}</td>
-        <td>
-        <td>
-            {users
-              .filter(user => user.role === 'user')
-              .map(user => (
-                <label key={user.id} style={{ display: 'block' }}>
-                  <input
-                    type="checkbox"
-                    checked={
-                      assignedUsers[adminUser.id]?.includes(user.id) || false
-                    }
-                    onChange={(e) =>
-                      handleUserAssignment(adminUser.id, user.id, e.target.checked)
-                    }
-                  />
-                  {user.username}
-                </label>
-              ))}
-          </td>
-
-        </td>
-      </tr>
-    ))}
-</tbody>
-
+          {admins.map((adminUser, index) => (
+            <tr key={adminUser.id}>
+              <td>{index + 1}</td>
+              <td>{adminUser.username}</td>
+              <td>{adminUser.email}</td>
+              <td>{adminUser.phone}</td>
+              <td>{adminUser.role}</td>
+              
+            </tr>
+          ))}
+        </tbody>
       </table>
 
       {showModal && (

@@ -8,6 +8,8 @@ import AdminLogin from './pages/AdminLogin/AdminLogin';
 import SuperUserLogin from './pages/SuperUserLogin/SuperUserLogin'
 import SuperAdminHome from './pages/SuperAdminHome/SuperAdminHome';
 import ManageAdmin from './pages/ManageAdmin/ManageAdmin'
+import CreateTask from './pages/CreateTask/CreateTask';
+import EditTask from "./pages/EditTask/EditTask";
 const App = () => {
   return (
     <Router>
@@ -21,6 +23,11 @@ const App = () => {
         <Route path='/superadminhome' element={<SuperAdminHome />} />
         <Route path='/superadminhome' element={<SuperAdminHome />} />
         <Route path='/ManageAdmin' element={<ManageAdmin />} />
+        <Route path='/ManageAdmin' element={<ManageAdmin />} />
+        <Route path='/CreateTask' element={<CreateTask/>}/>
+        <Route path='/EditTask' element={<EditTask/>}/>
+
+        <Route path="/EditTask/:taskId" element={<EditTask />} />
 
 
       </Routes>

@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SuperAdminLogin from "../SuperUserLogin/SuperUserLogin";
 import ManageAdmin from '../ManageAdmin/ManageAdmin'
+import ManageTask from "../ManageTasks/ManageTasks";
 
 const SuperAdminHome = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const SuperAdminHome = () => {
       case "users":
         return <MangementUsers />;
       case "tasks":
-        return <h2>Task Overview</h2>;
+        return <ManageTask/>
       default:
         return <h2>Welcome</h2>;
     }
@@ -71,7 +72,7 @@ const SuperAdminHome = () => {
           />
           <SidebarItem
             title="Logout"
-            icon={<UserIcon className="icon" />} // optional
+            icon={<UserIcon className="icon" />}
             isActive={false}
             onClick={handleLogout}
           />

@@ -1,0 +1,71 @@
+/* Container styling */
+.manage-task-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Header styling */
+  .manage-task-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Button wrapper for alignment */
+  .button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  /* Create Task Button styling */
+  .create-task-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .create-task-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+  
+  /* Table styling */
+  .task-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .task-table th,
+  .task-table td {
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .task-table th {
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: 600;
+    border-bottom: 2px solid #0056b3;
+  }
+  
+  .task-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .task-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  

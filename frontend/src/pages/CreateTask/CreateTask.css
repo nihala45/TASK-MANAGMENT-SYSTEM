@@ -1,0 +1,52 @@
+.create-task-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  .create-task-container h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #2c3e50;
+  }
+  
+  .create-task-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #34495e;
+  }
+  
+  .create-task-form input,
+  .create-task-form textarea,
+  .create-task-form select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
+  
+  .create-task-form button {
+    width: 100%;
+    padding: 14px;
+    background-color: #3498db;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-task-form button:hover {
+    background-color: #2980b9;
+  }
+  
