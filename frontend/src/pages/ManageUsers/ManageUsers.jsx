@@ -125,6 +125,8 @@ const  MangementUsers= () => {
               <th>Username</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>role</th>
+
               <th>Actions</th>
             </tr>
           </thead>
@@ -134,6 +136,8 @@ const  MangementUsers= () => {
                 <td>{user.username}</td>
                 <td>{user.email}</td>
                 <td>{user.phone}</td>
+                <td>{user.role}</td>
+
                
                 <td>
                   {user.is_active ? (

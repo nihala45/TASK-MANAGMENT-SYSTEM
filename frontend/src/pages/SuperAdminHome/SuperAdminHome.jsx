@@ -19,7 +19,7 @@ const SuperAdminHome = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/superadminlogin");
+    navigate("/SuperAdminLogin");
   };
 
   const [activeTab, setActiveTab] = useState("dashboard");

@@ -1,91 +1,54 @@
-/* Layout container */
-.full-container {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  font-family: 'Segoe UI', sans-serif;
-  overflow: hidden;
+.container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-/* Sidebar styling */
-.sidebar {
-  width: 260px;
-  background-color: #1f2937;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  padding-top: 20px;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-.sidebar-header {
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #374151;
+.admin-table th, .admin-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
 }
 
-.nav-menu {
-  padding: 20px 0;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 24px;
-  font-size: 16px;
+.btn {
+  padding: 8px 12px;
+  margin: 5px;
+  background-color: #007bff;
   color: white;
-  background: none;
   border: none;
   cursor: pointer;
+}
+
+.save-btn {
+  background-color: green;
+  margin-top: 20px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  text-align: left;
-  transition: background 0.3s;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
 }
 
-.nav-item .icon {
-  width: 20px;
-  height: 20px;
+.modal-content {
+  background: white;
+  padding: 20px;
+  width: 300px;
+  margin: 100px auto;
+  border-radius: 5px;
 }
 
-.nav-item:hover {
-  background-color: #374151;
-}
-
-.nav-item.active {
-  background-color: #4b5563;
-  font-weight: bold;
-}
-
-/* Main content area */
-.main-area {
-  flex: 1;
-  background-color: #f9fafb;
-  padding: 40px;
-  overflow-y: auto;
-}
-
-/* Card style for content */
-.main-card {
-  background-color: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.main-card h2 {
-  font-size: 32px;
-  margin-bottom: 15px;
-}
-
-.main-card p {
-  font-size: 18px;
-  color: #4b5563;
+.input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
 }

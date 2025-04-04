@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ManageAdmin.css';
 import api from '../../api';
 
 const SuperAdminPanel = () => {
+  const [users, setUsers] = useState([]);
   const [admins, setAdmins] = useState([]);
+  const [normalUsers, setNormalUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -12,6 +14,36 @@ const SuperAdminPanel = () => {
     phone: '',
   });
 
+  const [assignedUsers, setAssignedUsers] = useState({}); // { adminId: [userId1, userId2] }
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get("/api/admin/userslist/");
+      if (response.status === 200) {
+        const all = response.data;
+        const adminList = all.filter(u => u.role === 'admin');
+        const userList = all.filter(u => u.role === 'user');
+        setUsers(all);
+        setAdmins(adminList);
+        setNormalUsers(userList);
+
+        const defaultAssignments = {};
+        adminList.forEach(admin => {
+          defaultAssignments[admin.id] = []; // optionally fetch assigned users from backend
+        });
+        setAssignedUsers(defaultAssignments);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      alert('Failed to fetch users');
+    }
+  };
+
+ 
   const openModal = () => setShowModal(true);
   const closeModal = () => {
     setFormData({ name: '', email: '', password: '', phone: '' });
@@ -23,88 +55,89 @@ const SuperAdminPanel = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  
+  const createUser = async () => {
+    const { name, email, password, phone } = formData;
+    if (name && email && password && phone) {
+      try {
+        const response = await api.post('/api/create-admin/', {
+          username: name,
+          email,
+          password,
+          phone,
+        });
 
-const createAdmin = async () => {
-  const { name, email, password, phone } = formData;
-
-  if (name && email && password && phone) {
-    const newAdmin = {
-      username: name,
-      email: email,
-      password: password,
-      phone: phone,
-    };
-
-    try {
-      const response = await api.post('/api/create-admin/', newAdmin);
-
-      if (response.status === 201) {
-        setAdmins((prevAdmins) => [...prevAdmins, response.data.user]);
-        alert('Admin created successfully!');
-        closeModal();
+        if (response.status === 201) {
+          setUsers(prev => [...prev, response.data.user]);
+          alert('User created successfully!');
+          closeModal();
+        }
+      } catch (error) {
+        console.error('Error creating user:', error);
+        alert(error.response?.data?.error || 'Failed to create user');
       }
-    } catch (error) {
-      console.error('Error creating admin:', error);
-      alert(error.response?.data?.error || 'Failed to create admin');
+    } else {
+      alert('Please fill all fields');
     }
-  } else {
-    alert('Please fill all fields');
-  }
-};
-
-
-  const deleteAdmin = (index) => {
-    if (window.confirm("Are you sure you want to delete this admin?")) {
-      const updated = [...admins];
-      updated.splice(index, 1);
-      setAdmins(updated);
-    }
-  };
-
-  const toggleRole = (index) => {
-    const updated = [...admins];
-    updated[index].role = updated[index].role === 'Admin' ? 'Moderator' : 'Admin';
-    setAdmins(updated);
   };
 
   return (
     <div className="container">
-      <h2>SuperAdmin Panel</h2>
-      <button className="btn" onClick={openModal}>Create Admin</button>
+      <h2>All Users Management</h2>
+      <button className="btn" onClick={openModal}>Create User</button>
 
       <table className="admin-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
+            <th>Username</th>
             <th>Email</th>
             <th>Phone</th>
             <th>Role</th>
-            <th>Actions</th>
+            <th>Assign Users</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {admins.map((admin, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{admin.name}</td>
-              <td>{admin.email}</td>
-              <td>{admin.phone}</td>
-              <td>{admin.role}</td>
-              <td>
-                <button className="btn" onClick={() => toggleRole(index)}>Promote/Demote</button>
-                <button className="btn" onClick={() => deleteAdmin(index)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+  {users
+    .filter(user => user.role === 'admin')
+    .map((adminUser, index) => (
+      <tr key={adminUser.id}>
+        <td>{index + 1}</td>
+        <td>{adminUser.username}</td>
+        <td>{adminUser.email}</td>
+        <td>{adminUser.phone}</td>
+        <td>{adminUser.role}</td>
+        <td>
+        <td>
+            {users
+              .filter(user => user.role === 'user')
+              .map(user => (
+                <label key={user.id} style={{ display: 'block' }}>
+                  <input
+                    type="checkbox"
+                    checked={
+                      assignedUsers[adminUser.id]?.includes(user.id) || false
+                    }
+                    onChange={(e) =>
+                      handleUserAssignment(adminUser.id, user.id, e.target.checked)
+                    }
+                  />
+                  {user.username}
+                </label>
+              ))}
+          </td>
+
+        </td>
+      </tr>
+    ))}
+</tbody>
+
       </table>
 
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Create Admin</h3>
+            <h3>Create User</h3>
             <input
               className="input"
               type="text"
@@ -138,7 +171,7 @@ const createAdmin = async () => {
               onChange={handleChange}
             />
             <div>
-              <button className="btn" onClick={createAdmin}>Create</button>
+              <button className="btn" onClick={createUser}>Create</button>
               <button className="btn" onClick={closeModal}>Cancel</button>
             </div>
           </div>

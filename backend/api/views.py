@@ -135,7 +135,7 @@ class UserViewSet(viewsets.ViewSet):
     
     
 class CreateAdminView(APIView):
-    permission_classes = [IsAdminUser]  # Only superuser can create admins
+    # permission_classes = [IsAdminUser]  
 
     def post(self, request):
         data = request.data.copy()
@@ -149,8 +149,9 @@ class CreateAdminView(APIView):
             return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         data['is_staff'] = True
-        data['is_superuser'] = False  # Don't make them superuser
+        data['is_superuser'] = False 
         data['password'] = make_password(data['password'])
+        data['role'] = 'admin'
 
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
