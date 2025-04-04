@@ -1,0 +1,77 @@
+.manage-admin-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .create-admin-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .create-admin-form input,
+  .create-admin-form button {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .create-admin-form button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .admins-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admins-table th,
+  .admins-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .admins-table th {
+    background-color: #f2f2f2;
+  }
+  
+  button {
+    padding: 6px 12px;
+    margin: 2px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 30%;
+    left: 40%;
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 10px #aaa;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  

@@ -7,8 +7,20 @@ import {
 } from "@heroicons/react/24/solid";
 import "./superadminhome.css";
 import MangementUsers from "../ManageUsers/ManageUsers";
+import { logout } from "../../Redux/actions/authActions";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import SuperAdminLogin from "../SuperUserLogin/SuperUserLogin";
 
 const SuperAdminHome = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/superadminlogin");
+  };
+
   const [activeTab, setActiveTab] = useState("dashboard");
 
   const renderContent = () => {
@@ -16,9 +28,9 @@ const SuperAdminHome = () => {
       case "dashboard":
         return <h2>Welcome to the Dashboard</h2>;
       case "admins":
-        return 
+        return <h2>Admin Management (Coming Soon)</h2>;
       case "users":
-        return <MangementUsers/>;
+        return <MangementUsers />;
       case "tasks":
         return <h2>Task Overview</h2>;
       default:
@@ -56,10 +68,16 @@ const SuperAdminHome = () => {
             isActive={activeTab === "tasks"}
             onClick={() => setActiveTab("tasks")}
           />
+          <SidebarItem
+            title="Logout"
+            icon={<UserIcon className="icon" />} // optional
+            isActive={false}
+            onClick={handleLogout}
+          />
         </nav>
       </aside>
 
-     
+      {/* Main Content */}
       <main className="main-area">
         <div className="main-card">
           {renderContent()}

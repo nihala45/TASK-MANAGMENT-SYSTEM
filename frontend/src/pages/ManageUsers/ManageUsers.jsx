@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from "react-router-dom";
 import api from '../../api'
 import './ManageUsers.css'
-
+import EditUserModal from '../EditUserModel/EditUserModel';
+import CreateUserModal from '../CreateUserModal/CreateUserModal';
 
 
 const  MangementUsers= () => {
@@ -124,7 +125,6 @@ const  MangementUsers= () => {
               <th>Username</th>
               <th>Email</th>
               <th>Phone</th>
-             
               <th>Actions</th>
             </tr>
           </thead>

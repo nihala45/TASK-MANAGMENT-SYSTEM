@@ -1,28 +1,25 @@
+# serializers.py
 from rest_framework import serializers
 from .models import User
-
+from rest_framework.validators import UniqueValidator
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    username = serializers.CharField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    phone = serializers.CharField(max_length=15) 
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'phone', 'password', 'is_active', 'is_superuser' ]
-
+        fields = ['id', 'username', 'email', 'phone', 'password', 'is_active', 'is_superuser']
 
     def create(self, validated_data):
-        print('creating user data', validated_data)
-        password = validated_data.pop('password', None)
-        instance = User.objects.create(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-        instance.save()
-        return instance
-    
-    def update(self, instance, validated_data):
-        print(validated_data)
-        for key, value in validated_data.items():
-            if key == "password":
-                instance.set_password(value)
-            else:
-                setattr(instance,key,value)
-        instance.save()
-        return instance
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user

@@ -14,7 +14,11 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
-    print('hihiih')
+
+    def perform_create(self, serializer):
+        print('Creating user with data:', self.request.data)
+        serializer.save()
+
 
 class LoginView(APIView):
     def post(self, request,*args, **kwargs):
@@ -84,7 +88,7 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
-        try:
+        try:    
             print(pk)
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:

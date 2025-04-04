@@ -17,8 +17,7 @@ const SuperAdminLogin = () => {
     e.preventDefault();
     setLoading(true);
 
-    const data = { username, password }; // ✅ use 'username' in API request
-
+    const data = { username, password }; 
     try {
       const res = await api.post('/api/admin/login/', data);
 
@@ -41,7 +40,7 @@ const SuperAdminLogin = () => {
   return (
     <div className="form-wrapper">
       <form onSubmit={handleSubmit} className="form-container">
-        <h2 className="form-title">Superuser Login</h2>
+        <h2 className="form-title">Super Admin Login</h2>
 
         <div className="form-group">
           <label>Username:</label>
