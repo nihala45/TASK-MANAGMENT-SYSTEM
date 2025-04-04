@@ -6,6 +6,7 @@ import Home from './pages/Home/Home';
 import UserManagement from './pages/UserManagement/UserManagement';
 import AdminLogin from './pages/AdminLogin/AdminLogin';
 import SuperUserLogin from './pages/SuperUserLogin/SuperUserLogin'
+import SuperAdminHome from './pages/SuperAdminHome/SuperAdminHome';
 const App = () => {
   return (
     <Router>
@@ -16,10 +17,7 @@ const App = () => {
         <Route path='/UserManagement' element={<UserManagement />} />
         <Route path='/Adminlogin' element={<AdminLogin />} />
         <Route path='/superuserlogin' element={<SuperUserLogin />} />
-
-
-
-
+        <Route path='/superadminhome' element={<SuperAdminHome />} />
       </Routes>
     </Router>
   );
