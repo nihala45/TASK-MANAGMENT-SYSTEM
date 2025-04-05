@@ -14,7 +14,7 @@ const SuperAdminPanel = () => {
     phone: '',
   });
 
-  const [assignedUsers, setAssignedUsers] = useState({}); // { adminId: [userId1, userId2] }
+  const [assignedUsers, setAssignedUsers] = useState({}); 
 
   useEffect(() => {
     fetchUsers();

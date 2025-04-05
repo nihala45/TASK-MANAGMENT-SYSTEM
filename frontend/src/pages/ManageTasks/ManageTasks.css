@@ -1,4 +1,4 @@
-/* Container styling */
+
 .manage-task-container {
     max-width: 1200px;
     margin: 20px auto;
@@ -9,7 +9,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   }
   
-  /* Header styling */
+ 
   .manage-task-container h2 {
     text-align: center;
     margin-bottom: 20px;
@@ -17,7 +17,7 @@
     color: #333;
   }
   
-  /* Button wrapper for alignment */
+ 
   .button-wrapper {
     display: flex;
     justify-content: flex-end;
@@ -41,7 +41,7 @@
     transform: translateY(-2px);
   }
   
-  /* Table styling */
+ 
   .task-table {
     width: 100%;
     border-collapse: collapse;

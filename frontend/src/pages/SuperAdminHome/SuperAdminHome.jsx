@@ -79,7 +79,7 @@ const SuperAdminHome = () => {
         </nav>
       </aside>
 
-      {/* Main Content */}
+
       <main className="main-area">
         <div className="main-card">
           {renderContent()}

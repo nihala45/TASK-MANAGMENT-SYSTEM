@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../../api";
 
 const EditTask = () => {
-  const { taskId } = useParams(); // get task ID from URL
+  const { taskId } = useParams(); 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -15,7 +15,7 @@ const EditTask = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch users for the dropdown
+ 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -29,7 +29,7 @@ const EditTask = () => {
     fetchUsers();
   }, []);
 
-  // Fetch task data
+
   useEffect(() => {
     const fetchTask = async () => {
       try {

@@ -7,7 +7,7 @@ import { login } from '../../Redux/actions/authActions';
 import './superuserlogin.css';
 
 const SuperAdminLogin = () => {
-  const [username, setUsername] = useState(''); // ✅ use 'username'
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();

@@ -60,7 +60,7 @@ class Task(models.Model):
     
     title = models.CharField(max_length=255)
     description = models.TextField()
-    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
     due_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     completion_report = models.TextField(blank=True, null=True)

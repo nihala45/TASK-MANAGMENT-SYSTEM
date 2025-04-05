@@ -1,11 +1,10 @@
-/* Reset default browser styles */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
-  
-  /* Container for the user list */
+ 
   .user-list-container {
     max-width: 1000px;
     margin: 20px auto;
@@ -16,20 +15,20 @@
     background-color: #fff;
   }
   
-  /* Heading style */
+  
   .user-list-container h2 {
     font-size: 24px;
     margin-bottom: 20px;
     text-align: center;
   }
   
-  /* Table style */
+  
   .user-list-container table {
     width: 100%;
     border-collapse: collapse;
   }
   
-  /* Table header style */
+
   .user-list-container th {
     padding: 12px;
     text-align: left;
@@ -37,14 +36,14 @@
     border-bottom: 1px solid #ddd;
   }
   
-  /* Table cell style */
+
   .user-list-container td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
   }
   
-  /* Actions button style */
+
   .user-list-container button {
     padding: 8px 16px;
     margin-right: 8px;
