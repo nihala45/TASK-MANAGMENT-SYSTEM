@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, username, phone, password=None, role="user"):
         if not email:
@@ -38,11 +39,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=250, unique=True)
     phone = models.CharField(max_length=15, unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="user")
-
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
     objects = UserManager()
 
     USERNAME_FIELD = "username"
@@ -68,3 +67,14 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
+class AdminAssignedToTask(models.Model):
+    title = models.TextField()
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+
+

@@ -1,5 +1,7 @@
 from django.urls import path,include
-from .views import RegisterView, LoginView, UserDetailView,AdminLoginView, UserViewSet, CreateAdminView,CreateTaskView,AllTasksView, task_detail
+from .views import RegisterView, LoginView, UserDetailView,AdminLoginView, UserViewSet, CreateAdminView,CreateTaskView,AllTasksView, task_detail,AssignTaskToAdminView
+# , AdminLoginnView
+
 from rest_framework.routers import DefaultRouter
 
 
@@ -16,5 +18,9 @@ urlpatterns = [
     path('tasks/create/', CreateTaskView.as_view(), name='create-task'), 
     path('admin/tasks/', AllTasksView.as_view(), name='all-tasks'),
     path('tasks/<int:pk>/', task_detail, name='task-detail'),
+    path('assign-task-to-admin/', AssignTaskToAdminView.as_view(), name='assign-task-to-admin'),
+    # path('admin/loginn/', AdminLoginnView.as_view(), name='admin-loginn'),
+    
     path('', include(router.urls)),
+    
 ]

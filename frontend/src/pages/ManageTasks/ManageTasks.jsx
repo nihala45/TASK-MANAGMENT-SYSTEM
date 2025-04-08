@@ -11,10 +11,7 @@ const ManageTask = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        console.log("here is")
-
         const response = await api.get('api/admin/tasks/');
-        console.log("here is",response)
         const data = response.data;
         if (Array.isArray(data)) {
           setTasks(data);
@@ -26,7 +23,7 @@ const ManageTask = () => {
           setError('Unexpected data format received from server.');
         }
 
-        setError(null); 
+        setError(null);
       } catch (err) {
         console.error('Error fetching tasks:', err);
         setError('Failed to load tasks. Please try again.');
@@ -35,6 +32,20 @@ const ManageTask = () => {
 
     fetchTasks();
   }, []);
+
+  
+  const deleteTask = async (taskId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
+    if (!confirmDelete) return;
+
+    try {
+      await api.delete(`api/tasks/${taskId}/`);
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      setError('Failed to delete the task. Please try again.');
+    }
+  };
 
   return (
     <div className="manage-task-container">
@@ -62,6 +73,7 @@ const ManageTask = () => {
                 <th>Completion Report</th>
                 <th>Worked Hours</th>
                 <th>Edit</th>
+                <th>Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -79,6 +91,14 @@ const ManageTask = () => {
                       onClick={() => navigate(`/EditTask/${task.id}`)}
                     >
                       Edit
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="create-task-btn delete-btn"
+                      onClick={() => deleteTask(task.id)}
+                    >
+                      Delete
                     </button>
                   </td>
                 </tr>

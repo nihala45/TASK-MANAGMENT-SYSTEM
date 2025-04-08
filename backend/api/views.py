@@ -13,8 +13,19 @@ from .models import Task
 from .serializers import TaskSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
+from .models import AdminAssignedToTask
+from .serializers import AdminAssignedToTaskSerializer
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import BasicAuthentication
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import JsonResponse
 
 
+
+# class CsrfExemptSessionAuthentication(SessionAuthentication):
+#     def enforce_csrf(self, request):
+#         return
 
 
 class RegisterView(generics.CreateAPIView):
@@ -165,13 +176,19 @@ class CreateAdminView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-    
+   
 
     
     
-class CreateTaskView(generics.CreateAPIView):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+class CreateTaskView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]  # Only admin can assign tasks
+
+    def post(self, request):
+        serializer = TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Task created successfully', 'task': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class AllTasksView(APIView):
     permission_classes = [IsAuthenticated] 
@@ -204,3 +221,50 @@ def task_detail(request, pk):
     elif request.method == 'DELETE':
         task.delete()
         return Response({'message': 'Task deleted successfully'})
+    
+    
+
+class AssignTaskToAdminView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]  
+
+    def post(self, request):
+        admin_id = request.data.get("admin_id")
+        title = request.data.get("title")
+
+        if not (admin_id and title):
+            return Response({"error": "admin_id and title are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            admin_user = User.objects.get(id=admin_id, role='admin')
+        except User.DoesNotExist:
+            return Response({"error": "Admin user not found or invalid role"}, status=status.HTTP_404_NOT_FOUND)
+
+        task = AdminAssignedToTask.objects.create(title=title, assigned_to=admin_user)
+        serializer = AdminAssignedToTaskSerializer(task)
+        return Response({"message": "Task assigned successfully", "task": serializer.data}, status=status.HTTP_201_CREATED)
+    
+    
+
+
+# class AdminLoginnView(APIView):
+#     def post(self, request):
+#         username = request.data.get('username')
+#         password = request.data.get('password')
+
+#         if not username or not password:
+#             return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         user = authenticate(username=username, password=password)
+
+#         if user and getattr(user, 'role', None) == 'admin':
+#             refresh = RefreshToken.for_user(user)
+#             return Response({
+#                 'refresh': str(refresh),
+#                 'access': str(refresh.access_token),
+                
+#                 'username': user.username
+#             }, status=status.HTTP_200_OK)
+
+#         return Response({'error': 'Invalid credentials or not an admin'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    

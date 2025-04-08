@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './ManageAdmin.css';
 import api from '../../api';
 
-const SuperAdminPanel = () => {
-  const [users, setUsers] = useState([]);
+const ManageAdmin = () => {
   const [admins, setAdmins] = useState([]);
-  const [normalUsers, setNormalUsers] = useState([]);
+  const [taskInputs, setTaskInputs] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -13,52 +12,56 @@ const SuperAdminPanel = () => {
     password: '',
     phone: '',
   });
-
-  const [assignedUsers, setAssignedUsers] = useState({}); 
+  const [editModal, setEditModal] = useState(false);
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
 
   useEffect(() => {
-    fetchUsers();
+    fetchAdmins();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchAdmins = async () => {
     try {
       const response = await api.get("/api/admin/userslist/");
       if (response.status === 200) {
-        const all = response.data;
-        const adminList = all.filter(u => u.role === 'admin');
-        const userList = all.filter(u => u.role === 'user');
-        setUsers(all);
+        const adminList = response.data.filter(u => u.role === 'admin');
         setAdmins(adminList);
-        setNormalUsers(userList);
-
-        const defaultAssignments = {};
-        adminList.forEach(admin => {
-          defaultAssignments[admin.id] = [];
-        });
-        setAssignedUsers(defaultAssignments);
+        const initialTasks = {};
+        adminList.forEach(admin => initialTasks[admin.id] = '');
+        setTaskInputs(initialTasks);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
-      alert('Failed to fetch users');
+      console.error('Error fetching admins:', error);
+      alert('Failed to fetch admins');
     }
   };
 
-  const handleUserAssignment = (adminId, userId, isChecked) => {
-    setAssignedUsers(prev => {
-      const updated = { ...prev };
-      if (!updated[adminId]) {
-        updated[adminId] = [];
-      }
-
-      if (isChecked) {
-        updated[adminId] = [...updated[adminId], userId];
-      } else {
-        updated[adminId] = updated[adminId].filter(id => id !== userId);
-      }
-
-      return updated;
-    });
+  const handleTaskChange = (adminId, value) => {
+    setTaskInputs(prev => ({ ...prev, [adminId]: value }));
   };
+
+  const assignWork = async (adminId) => {
+    const task = taskInputs[adminId];
+    if (!task) {
+      alert('Please enter a task');
+      return;
+    }
+  
+    try {
+      const response = await api.post('/api/assign-task-to-admin/', {
+        admin_id: adminId,
+        title: task,
+      });
+  
+      if (response.status === 201) {
+        alert('Task assigned successfully');
+        setTaskInputs(prev => ({ ...prev, [adminId]: '' }));
+      }
+    } catch (error) {
+      console.error('Error assigning task:', error);
+      alert(error.response?.data?.error || 'Failed to assign task');
+    }
+  };
+  
 
   const openModal = () => setShowModal(true);
   const closeModal = () => {
@@ -83,88 +86,117 @@ const SuperAdminPanel = () => {
         });
 
         if (response.status === 201) {
-          setUsers(prev => [...prev, response.data.user]);
-          alert('User created successfully!');
+          alert('Admin created successfully!');
           closeModal();
+          fetchAdmins();
         }
       } catch (error) {
-        console.error('Error creating user:', error);
-        alert(error.response?.data?.error || 'Failed to create user');
+        console.error('Error creating admin:', error);
+        alert(error.response?.data?.error || 'Failed to create admin');
       }
     } else {
       alert('Please fill all fields');
     }
   };
 
+  const openEditModal = (admin) => {
+    setSelectedAdmin(admin);
+    setFormData({
+      name: admin.username,
+      email: admin.email,
+      phone: admin.phone,
+      password: '',
+    });
+    setEditModal(true);
+  };
+
+  const updateAdmin = async () => {
+    try {
+      const response = await api.put(`/api/edit-admin/${selectedAdmin.id}/`, {
+        username: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+      });
+      if (response.status === 200) {
+        alert('Admin updated successfully');
+        setEditModal(false);
+        fetchAdmins();
+      }
+    } catch (error) {
+      console.error('Error updating admin:', error);
+      alert('Failed to update admin');
+    }
+  };
+
   return (
     <div className="container">
-      <h2>All Users Management</h2>
+      <h2>Admin Work Assignment</h2>
       <button className="btn" onClick={openModal}>Create Admin</button>
 
       <table className="admin-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Username</th>
+            <th>Admin</th>
             <th>Email</th>
-            <th>Phone</th>
-            <th>Role</th>
-        
+            <th>Assign Work</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {admins.map((adminUser, index) => (
-            <tr key={adminUser.id}>
+          {admins.map((admin, index) => (
+            <tr key={admin.id}>
               <td>{index + 1}</td>
-              <td>{adminUser.username}</td>
-              <td>{adminUser.email}</td>
-              <td>{adminUser.phone}</td>
-              <td>{adminUser.role}</td>
-              
+              <td>{admin.username}</td>
+              <td>{admin.email}</td>
+              <td>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Enter work"
+                  value={taskInputs[admin.id] || ''}
+                  onChange={(e) => handleTaskChange(admin.id, e.target.value)}
+                />
+                <button className="btn" onClick={() => assignWork(admin.id)}>Assign</button>
+              </td>
+              <td>
+                <button className="btn" onClick={() => openEditModal(admin)}>Edit</button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
+      {/* Create Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Create User</h3>
-            <input
-              className="input"
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-            <input
-              className="input"
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <input
-              className="input"
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            <input
-              className="input"
-              type="tel"
-              name="phone"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={handleChange}
-            />
+            <h3>Create Admin</h3>
+            <input className="input" name="name" placeholder="Name" value={formData.name} onChange={handleChange} />
+            <input className="input" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
+            <input className="input" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
+            <input className="input" name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} />
             <div>
               <button className="btn" onClick={createUser}>Create</button>
               <button className="btn" onClick={closeModal}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Edit Admin</h3>
+            <input className="input" name="name" value={formData.name} onChange={handleChange} />
+            <input className="input" name="email" value={formData.email} onChange={handleChange} />
+            <input className="input" name="phone" value={formData.phone} onChange={handleChange} />
+            <input className="input" name="password" placeholder="New password (optional)" value={formData.password} onChange={handleChange} />
+            <div>
+              <button className="btn" onClick={updateAdmin}>Update</button>
+              <button className="btn" onClick={() => setEditModal(false)}>Cancel</button>
             </div>
           </div>
         </div>
@@ -173,4 +205,4 @@ const SuperAdminPanel = () => {
   );
 };
 
-export default SuperAdminPanel;
+export default ManageAdmin;

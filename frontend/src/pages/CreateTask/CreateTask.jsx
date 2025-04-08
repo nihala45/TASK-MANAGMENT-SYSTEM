@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../api"; 
+import api from "../../api"; // Your axios instance
 import "./CreateTask.css";
 
 const CreateTask = () => {
@@ -10,37 +10,42 @@ const CreateTask = () => {
     due_date: "",
   });
 
-  const [users, setUsers] = useState([]); 
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(""); 
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-
+  // Fetch users (excluding superusers)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await api.get("/api/admin/userslist/");
         const filteredUsers = response.data.filter((user) => !user.is_superuser);
         setUsers(filteredUsers);
-      } catch (error) {
-        console.error("Error fetching users:", error);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+        setError("Failed to fetch users.");
       }
     };
+
     fetchUsers();
   }, []);
 
-
+  // Handle form field changes
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "assigned_to" ? parseInt(value) : value,
+    }));
   };
 
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    console.log("Submitting data:", formData); // For debugging
 
     try {
       await api.post("/api/tasks/create/", formData);
@@ -51,8 +56,8 @@ const CreateTask = () => {
         assigned_to: "",
         due_date: "",
       });
-    } catch (error) {
-      console.error("Error creating task:", error);
+    } catch (err) {
+      console.error("Error creating task:", err);
       setError("Failed to create task. Please try again.");
     } finally {
       setLoading(false);
@@ -62,7 +67,8 @@ const CreateTask = () => {
   return (
     <div className="create-task-container">
       <h2>Create New Task</h2>
-      {error && <p className="error">{error}</p>}
+      {error && <div className="error-box">{error}</div>}
+
       <form className="create-task-form" onSubmit={handleSubmit}>
         <label>Title</label>
         <input
@@ -85,7 +91,12 @@ const CreateTask = () => {
         ></textarea>
 
         <label>Assign To</label>
-        <select name="assigned_to" value={formData.assigned_to} onChange={handleChange} required>
+        <select
+          name="assigned_to"
+          value={formData.assigned_to}
+          onChange={handleChange}
+          required
+        >
           <option value="">-- Select User --</option>
           {users.map((user) => (
             <option key={user.id} value={user.id}>

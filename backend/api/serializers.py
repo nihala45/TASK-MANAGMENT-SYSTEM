@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from .models import User
 from .models import Task
+from .models import AdminAssignedToTask
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -31,16 +32,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    assigned_to = serializers.CharField(source='assigned_to.username',  read_only=True)
     class Meta:
         model = Task
-        fields = [
-            'id',
-            'title',
-            'description',
-            'assigned_to',
-            'due_date',
-            'status',
-            'completion_report',
-            'worked_hours'
-        ]
+        fields = '__all__' 
+        
+        
+class AdminAssignedToTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminAssignedToTask
+        fields = ['id', 'title', 'assigned_to']
