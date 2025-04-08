@@ -33,7 +33,7 @@ def get_csrf_token(request):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class AdminLoginnView(APIView):
+class AdminLoginView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -73,7 +73,7 @@ class AdminLoginnView(APIView):
 
 
 
-class AdminLoginView(APIView):
+class SuperAdminLoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
@@ -294,23 +294,3 @@ class AssignTaskToAdminView(APIView):
     
     
 
-
-
-
-# @method_decorator(csrf_exempt, name='dispatch')
-# class AdminLoginnView(APIView):
-#     permission_classes = [AllowAny]
-
-#     def post(self, request):
-#         username = request.data.get('username')
-#         password = request.data.get('password')
-#         user = authenticate(username=username, password=password)
-
-#         if user is not None and user.is_superuser:
-#             refresh = RefreshToken.for_user(user)
-#             return Response({
-#                 'refresh': str(refresh),
-#                 'access': str(refresh.access_token),
-#                 'is_superuser': user.is_superuser
-#             })
-      
