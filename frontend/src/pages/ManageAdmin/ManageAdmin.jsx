@@ -168,7 +168,6 @@ const ManageAdmin = () => {
         </tbody>
       </table>
 
-      {/* Create Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -185,7 +184,7 @@ const ManageAdmin = () => {
         </div>
       )}
 
-      {/* Edit Modal */}
+     
       {editModal && (
         <div className="modal-overlay">
           <div className="modal-content">

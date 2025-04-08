@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../api"; // Your axios instance
+import api from "../../api";
 import "./CreateTask.css";
 
 const CreateTask = () => {
@@ -14,7 +14,7 @@ const CreateTask = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch users (excluding superusers)
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -30,7 +30,7 @@ const CreateTask = () => {
     fetchUsers();
   }, []);
 
-  // Handle form field changes
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -39,13 +39,13 @@ const CreateTask = () => {
     }));
   };
 
-  // Handle form submission
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    console.log("Submitting data:", formData); // For debugging
+    console.log("Submitting data:", formData); 
 
     try {
       await api.post("/api/tasks/create/", formData);
@@ -104,7 +104,7 @@ const CreateTask = () => {
             </option>
           ))}
         </select>
-
+       
         <label>Due Date</label>
         <input
           type="date"

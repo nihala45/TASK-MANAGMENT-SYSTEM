@@ -10,6 +10,7 @@ import SuperAdminHome from './pages/SuperAdminHome/SuperAdminHome';
 import ManageAdmin from './pages/ManageAdmin/ManageAdmin'
 import CreateTask from './pages/CreateTask/CreateTask';
 import EditTask from "./pages/EditTask/EditTask";
+import AdminHome from './pages/AdminHome/AdminHome';
 const App = () => {
   return (
     <Router>
@@ -26,10 +27,8 @@ const App = () => {
         <Route path='/ManageAdmin' element={<ManageAdmin />} />
         <Route path='/CreateTask' element={<CreateTask/>}/>
         <Route path='/EditTask' element={<EditTask/>}/>
-
+        <Route path='/adminhome' element={<AdminHome/>}/>
         <Route path="/EditTask/:taskId" element={<EditTask />} />
-
-
       </Routes>
     </Router>
   );

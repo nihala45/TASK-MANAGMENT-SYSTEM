@@ -15,18 +15,80 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from .models import AdminAssignedToTask
 from .serializers import AdminAssignedToTaskSerializer
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import BasicAuthentication
 from django.views.decorators.csrf import ensure_csrf_cookie
+
 from django.http import JsonResponse
+from rest_framework.permissions import AllowAny
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 
-# class CsrfExemptSessionAuthentication(SessionAuthentication):
-#     def enforce_csrf(self, request):
-#         return
 
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'message': 'CSRF cookie set'})
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AdminLoginnView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        user = User.objects.filter(username=username).first()
+
+        if user:
+            print("Found user:", user.username)
+            if user.check_password(password):
+                print("Password matched")
+                if user.role == 'admin':
+                    print("Role matched")
+                    refresh = RefreshToken.for_user(user)
+                    return Response({
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                        'username': user.username,
+                        'email': user.email,
+                        'role': user.role,
+                    })
+                else:
+                    print("Not an admin:", user.role)
+            else:
+                print("Wrong password")
+        else:
+            print("User not found")
+
+        return Response({'detail': 'Invalid credentials or not an admin'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+
+class AdminLoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+
+        if user is not None and user.is_superuser:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'is_superuser': user.is_superuser
+            })
+        return Response({'detail': 'Invalid credentials or not an admin'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -50,7 +112,9 @@ class LoginView(APIView):
             return Response({
                 'refresh' : str(refresh),
                 'access' : str(refresh.access_token),
-                  'is_superuser': user.is_superuser
+                'is_superuser': user.is_superuser,
+                'user_id': user.id,
+                 
             })
         return Response({'error' : "Invalid Credentials"}, status=400)
     
@@ -62,22 +126,7 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
         print(self.request.user)
         return self.request.user
     
-class AdminLoginView(APIView):
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(username=username, password=password)
 
-        if user is not None and user.is_superuser:
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'is_superuser': user.is_superuser
-            })
-        return Response({'detail': 'Invalid credentials or not an admin'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    
     
 class UserViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAdminUser]
@@ -181,7 +230,7 @@ class CreateAdminView(APIView):
     
     
 class CreateTaskView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]  # Only admin can assign tasks
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def post(self, request):
         serializer = TaskSerializer(data=request.data)
@@ -201,7 +250,6 @@ class AllTasksView(APIView):
     
 @api_view(['GET', 'PUT', 'DELETE'])
 def task_detail(request, pk):
-    print("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
     try:
         task = Task.objects.get(pk=pk)
     except Task.DoesNotExist:
@@ -212,7 +260,7 @@ def task_detail(request, pk):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = TaskSerializer(task, data=request.data)
+        serializer = TaskSerializer(task, data=request.data, partial=True) 
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'Task updated successfully', 'task': serializer.data})
@@ -221,6 +269,7 @@ def task_detail(request, pk):
     elif request.method == 'DELETE':
         task.delete()
         return Response({'message': 'Task deleted successfully'})
+
     
     
 
@@ -246,25 +295,22 @@ class AssignTaskToAdminView(APIView):
     
 
 
+
+
+# @method_decorator(csrf_exempt, name='dispatch')
 # class AdminLoginnView(APIView):
+#     permission_classes = [AllowAny]
+
 #     def post(self, request):
 #         username = request.data.get('username')
 #         password = request.data.get('password')
-
-#         if not username or not password:
-#             return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
-
 #         user = authenticate(username=username, password=password)
 
-#         if user and getattr(user, 'role', None) == 'admin':
+#         if user is not None and user.is_superuser:
 #             refresh = RefreshToken.for_user(user)
 #             return Response({
 #                 'refresh': str(refresh),
 #                 'access': str(refresh.access_token),
-                
-#                 'username': user.username
-#             }, status=status.HTTP_200_OK)
-
-#         return Response({'error': 'Invalid credentials or not an admin'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    
+#                 'is_superuser': user.is_superuser
+#             })
+      

@@ -16,6 +16,8 @@ const Form = ({ route, method }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -51,7 +53,6 @@ const Form = ({ route, method }) => {
         localStorage.setItem(ACCESS_TOKEN, access);
         localStorage.setItem(REFRESH_TOKEN, refresh);
         localStorage.setItem("admin", is_superuser);
-
         dispatch(login(res.data));
         alert("Login successful");
         navigate("/");

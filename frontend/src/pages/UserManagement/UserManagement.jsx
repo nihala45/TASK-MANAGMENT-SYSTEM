@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./UserManagement.css";
 
 const UserManagement = () => {
-    // Sample user data (Replace this with API data later)
+
     const [users, setUsers] = useState([
         { id: 1, name: "John Doe", email: "john@example.com" },
         { id: 2, name: "Jane Smith", email: "jane@example.com" },
@@ -13,14 +13,13 @@ const UserManagement = () => {
     const [editedName, setEditedName] = useState("");
     const [editedEmail, setEditedEmail] = useState("");
 
-    // Handle edit button click
+   
     const startEditing = (user) => {
         setEditingUser(user);
         setEditedName(user.name);
         setEditedEmail(user.email);
     };
 
-    // Handle saving edited user
     const saveEdit = () => {
         setUsers(users.map((user) =>
             user.id === editingUser.id ? { ...user, name: editedName, email: editedEmail } : user
@@ -28,7 +27,7 @@ const UserManagement = () => {
         setEditingUser(null);
     };
 
-    // Handle deleting a user
+ 
     const deleteUser = (id) => {
         setUsers(users.filter(user => user.id !== id));
     };
@@ -37,7 +36,7 @@ const UserManagement = () => {
         <div className="container">
             <h2>User Management</h2>
 
-            {/* User List Table */}
+        
             <table className="user-table">
                 <thead>
                     <tr>
@@ -66,7 +65,7 @@ const UserManagement = () => {
                 </tbody>
             </table>
 
-            {/* Edit User Modal */}
+         
             {editingUser && (
                 <div className="modal">
                     <div className="modal-content">

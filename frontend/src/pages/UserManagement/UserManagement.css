@@ -1,4 +1,4 @@
-/* Container */
+
 .container {
     max-width: 400px;
     margin: 40px auto;
@@ -9,7 +9,7 @@
     text-align: center;
 }
 
-/* Form Container */
+
 .form-container {
     display: flex;
     flex-direction: column;
@@ -17,7 +17,7 @@
     margin-bottom: 20px;
 }
 
-/* Input Fields */
+
 .input {
     padding: 10px;
     border-radius: 5px;
@@ -32,7 +32,6 @@
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* Buttons */
 .submit-button, .edit-button, .delete-button {
     padding: 10px;
     border-radius: 5px;
@@ -69,7 +68,6 @@
     background-color: #c82333;
 }
 
-/* User List */
 .user-list {
     text-align: left;
 }
